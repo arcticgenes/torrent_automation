@@ -30,4 +30,4 @@ if ($kind -match "single"){
 	$action = "copy"
 }
 
-& $filebot -script fn:amc --output $nasFolder --log-file $nasFolder\amc.log --action $action --conflict override -non-strict --def plex=$plexIP "movieFormat=Movies/{n} - {y} ({vf})" unsorted=y "ut_state=$state" "ut_title=$title" "ut_kind=$kind" "ut_file=$fileile" "ut_dir=$dir"
+& $filebot -script fn:amc --output $nasFolder --log-file $nasFolder\amc.log --action $action --conflict override -non-strict --def plex=$plexIP "movieFormat=Movies/{n} - {y} ({vf})" unsorted=y "ut_state=$state" "ut_title=$title" "ut_kind=$kind" "ut_file=$file" "ut_dir=$dir"

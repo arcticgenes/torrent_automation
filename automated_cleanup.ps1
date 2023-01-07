@@ -9,6 +9,8 @@ param (
 [String]$Script:token = ""
 $Script:webClient = $null
 
+$baseDate = [datetime]'1/1/1970'
+
 
 
 function Use-RunAs {    
@@ -101,7 +103,7 @@ $json.torrents | Foreach-object{
     $object.Hash = $_[0]
     $object.Ratio = ($_[7]/1000)
     $object.Status = $_[21]
-    $object.Added_On = ([TimeZone]::CurrentTimeZone.ToLocalTime(([datetime]'1/1/1970').AddSeconds($_[23])))
+    $object.Added_On = ([TimeZone]::CurrentTimeZone.ToLocalTime($basedate.AddSeconds($_[23])))
     $object.Label = $_[11]
     $object.File = $_[26]
     $torrents += $object

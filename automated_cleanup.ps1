@@ -1,4 +1,4 @@
-param (
+ param (
 [String]$server,
 [String]$port,
 [String]$user,
@@ -11,6 +11,7 @@ $Script:webClient = $null
 
 $baseDate = [datetime]'1/1/1970'
 $currentTime = Get-Date
+$baseFolder = "E:\Torrents\Finished"
 
 
 
@@ -80,7 +81,7 @@ function Remove-Torrents {
         $finishedTorrents
     )
     foreach($torrent in $finishedTorrents){
-        Utorrent-HttpGet "action=remove&hash=$($torrent.Hash)"
+        Utorrent-HttpGet "action=removedata&hash=$($torrent.Hash)"
     }
 
     sleep -s 10
@@ -106,7 +107,10 @@ $json.torrents | Foreach-object{
     $object.Status = $_[21]
     $object.Added_On = ([TimeZone]::CurrentTimeZone.ToLocalTime($basedate.AddSeconds($_[23])))
     $object.Label = $_[11]
-    $object.File = $_[26]
+     $object.File = $_[26]
+    if ($_[26] -eq $baseFolder){
+        $object.File = ""
+    }   
     $torrents += $object
 }
 
@@ -119,4 +123,4 @@ Foreach($torrent in $torrents){
     }
 }
 
-Remove-Torrents $finishedTorrents
+Remove-Torrents $finishedTorrents 

@@ -10,6 +10,7 @@ param (
 $Script:webClient = $null
 
 $baseDate = [datetime]'1/1/1970'
+$currentTime = Get-Date
 
 
 
@@ -112,8 +113,8 @@ $json.torrents | Foreach-object{
 Foreach($torrent in $torrents){
     if ($torrent.Status -match "Seeding"){
         if ($torrent.Ratio -ge 1.5 -AND $torrent.Label -match "Immortal Seed") {$finishedTorrents += $torrent}
-        if ($torrent.Added_On -lt (get-date).AddHours(-25) -AND $torrent.Label -match "Immortal Seed") {$finishedTorrents += $torrent}
-        if ($torrent.Added_On -lt (get-date).AddHours(-337)) {$finishedTorrents += $torrent}
+        if ($torrent.Added_On -lt $currentTime.AddHours(-25) -AND $torrent.Label -match "Immortal Seed") {$finishedTorrents += $torrent}
+        if ($torrent.Added_On -lt $currentTime.AddHours(-337)) {$finishedTorrents += $torrent}
         if ($torrent.Ratio -ge 2.0) {$finishedTorrents += $torrent}
     }
 }

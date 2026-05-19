@@ -32,33 +32,26 @@ function Use-RunAs {
     }  
 } 
 
+function Convert-TimeStamp {
+	param([int]$timestamp)
+	
+	[TimeZone]::CurrentTimeZone.ToLocalTime((Get-Date "1970-01-01T00:00:00").AddSeconds($timestamp))
+	
+}
+
 
 Use-RunAs
 
-$torrents = @()
-
-$json = @(qbt torrent list -F json | convertfrom-json)
-
-$json| Foreach-object{
-    $object = "" | select Name,Hash,Ratio,Status,CompletedDate,Tags
-    $object.Name = $_.name
-    $object.Hash = $_.hash
-    $object.Ratio = $_.ratio
-    $object.Status = $_.state
-    $object.CompletedDate = [TimeZone]::CurrentTimeZone.ToLocalTime((Get-Date "1970-01-01T00:00:00").AddSeconds($_.completion_on))
-    $object.Tags = $_.tags
-    
-    $torrents += $object
-}
+$torrents = @(qbt torrent list -F json | convertfrom-json)
 
 $finishedTorrents = @()
 
 Foreach($torrent in $torrents){
-    if ($torrent.Status -match "stalledUp|uploading"){
-        if ($torrent.Ratio -ge 1.5 -AND $torrent.Tags -contains "Immortal Seed") {$finishedTorrents += $torrent}
-        elseif ($torrent.CompletedDate -lt $currentTime.AddHours(-25) -AND $torrent.Tags -contains "Immortal Seed") {$finishedTorrents += $torrent}
-        elseif ($torrent.CompletedDate -lt $currentTime.AddHours(-337)) {$finishedTorrents += $torrent}
-        elseif ($torrent.Ratio -ge 2.0) {$finishedTorrents += $torrent}
+    if ($torrent.state -match "stalledUp|uploading"){
+        if ($torrent.ratio -ge 1.5 -AND $torrent.tags -contains "Immortal Seed") {$finishedTorrents += $torrent}
+        elseif ((Convert-TimeStamp($torrent.completion_on)) -lt $currentTime.AddHours(-25) -AND $torrent.tags -contains "Immortal Seed") {$finishedTorrents += $torrent}
+        elseif ((Convert-TimeStamp($torrent.completion_on)) -lt $currentTime.AddHours(-337)) {$finishedTorrents += $torrent}
+        elseif ($torrent.ratio -ge 2.0) {$finishedTorrents += $torrent}
     }
 }
 
